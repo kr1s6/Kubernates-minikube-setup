@@ -1,87 +1,73 @@
-# Kubernetes – Practical Notes & Example Setup
+# Kubernetes – Practical Notes & Example Minikube Setup
 
 This README summarizes core Kubernetes concepts and a hands-on example using **MongoDB** and **Mongo Express** deployed on **Minikube**.
 
 ---
 
-## What is Kubernetes
-
+#### What is Kubernetes
 * Open‑source container orchestration platform
 * Manages containerized applications across different environments
 * Handles deployment, scaling, networking, and self‑healing
 
----
-
-## Kubernetes Architecture
-
-* **Master Node (Control Plane)** – manages the cluster
-* **Worker Nodes** – run application workloads
+#### Kubernetes Architecture
+* **Master Node (Control Plane)** – manages the cluster (at least one)
+* **Worker Nodes** – run application workloads, are connected to Master node
 * Each worker node runs **kubelet** (node ↔ cluster communication)
+* Each worker has containers of different applications deployed on it
 
-### Control Plane Components
+#### Master Node Processes
+* **API Server** (container) – entry point to the Kubernates cluster (UI, CLI, REST API)
+* **Controller Manager** (container) – keeps track of what is happening in the cluster
+* **Scheduler** (container) – schedule containers on different nodes based on workload/available serve resources
+* **etcd** (storage) – distributed key‑value store holding cluster state
 
-* **API Server** – entry point to the cluster (UI, CLI, REST API)
-* **Controller Manager** – monitors and maintains desired cluster state
-* **Scheduler** – assigns Pods to nodes based on resources
-* **etcd** – distributed key‑value store holding cluster state
-
-### Virtual Network
-
+#### Virtual Network
 * Connects all nodes into a single logical network
 * Allows Pods and Services to communicate as if on one machine
-
-> At least one master node is required for a functioning cluster.
 
 ---
 
 ## Core Kubernetes Components
 
-### Node (Worker Node)
-
+#### Node (Worker Node)
 * Physical or virtual machine
 * Hosts Pods and application containers
 
-### Pod
-
+#### Pod
 * Smallest deployable unit in Kubernetes
 * Abstraction over one or more containers
 * Usually runs **one application container**
 * Has its own internal IP address
-* Pods are **ephemeral** – they can be recreated with a new IP
+* Pods are **ephemeral** – they can die very easliy with container crush and then be recreated with a new IP
 
 Because Pods can die and change IPs, Kubernetes uses **Services**.
 
 ---
 
-### Service
-
+#### Service
 * Provides a **stable IP and DNS name** for Pods
-* Enables reliable Pod‑to‑Pod communication
+* Enables reliable Pod‑to‑Pod communicatio
+* If Pod dies the Service will stay
 
 **Types:**
 
-* **ClusterIP** – internal communication (default)
-* **LoadBalancer / NodePort** – exposes service externally
+* **ClusterIP** – internal service (default)
+* **LoadBalancer / NodePort** – external service
 
----
-
-### Ingress
-
+#### Ingress
+Request goes first to Ingrees which forward them to the Service, what is soultion to External Service problem with public address.
 * Routes external HTTP/HTTPS traffic to Services
-* Preferred alternative to exposing Services directly
 
 ---
 
 ## ConfigMap & Secret
 
 ### ConfigMap
-
 * Stores non‑sensitive configuration
 * Example: database URLs, service names
 * Injected into Pods as environment variables
 
 ### Secret
-
 * Stores sensitive data (credentials, tokens)
 * Base64‑encoded
 * Stored inside the cluster (not in source code)
@@ -89,7 +75,6 @@ Because Pods can die and change IPs, Kubernetes uses **Services**.
 ---
 
 ## Volumes
-
 * Provide persistent storage for Pods
 * Prevent data loss when Pods restart
 * Can be local or cloud‑based
